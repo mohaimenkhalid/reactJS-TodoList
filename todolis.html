@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JS Bin</title>
+    <style>
+        #root{ display:flex; justify-content:center;}
+        .todo-list{ width: 500px; border: 2px solid gray; padding: 15px;}
+        .todo{margin:5px; display:flex;}
+        .todo button{ margin-right: 10px; font-wight:800;}
+        .todo .task{ font-size: 20px;}
+        .todo-list input{padding:10px; width: 95%}
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script  type="text/babel">
+    const rootEl = document.getElementById('root');
+    const data = [
+        {
+            id: 1,
+            task: "doing tutorial",
+            done: false
+        },
+        {
+            id: 2,
+            task: "doing study",
+            done: false
+        },
+        {
+            id: 3,
+            task: "have to go home",
+            done: false
+        }
+    ];
+
+    const Todo = ({ id, task, removeTask }) => {
+        return(<div className="todo">
+            <button>X</button>
+            <button onClick={() => removeTask(id)}>-</button>
+            <div className="task">{task}</div>
+        </div>);
+    }
+
+    const TodoList = () => {
+
+        const [todos, setTodos] = React.useState([...data]);
+        const [inputVal, setInputVal] = React.useState("");
+        const [currentId, setCurrentId] = React.useState(data[data.length - 1].id);
+
+        const handleChange = (e) =>{
+            setInputVal(e.target.value);
+        }
+
+        const handleKeyDown = (e) => {
+            if(e.key === "Enter"){
+                setTodos((currentTodos)  => ([
+                    {
+                        id: currentId + 1,
+                        task: inputVal,
+                        done: false
+                    },
+                    ...currentTodos
+                ]));
+
+                setCurrentId((currentId) => currentId+1);
+                setInputVal("");
+            }
+        }
+
+        const removeTask = (id) => {
+            setTodos((currentTodos) => currentTodos.filter(todo => todo.id !== id))
+        }
+        return(<div className="todo-list">
+            <input type="text" placeholder="Add a new task..."
+                   onChange={handleChange}
+                   onKeyDown={handleKeyDown}
+                   value={inputVal}
+            />
+            {todos.map((todo) => <Todo {...todo} removeTask={removeTask} />)}
+        </div>);
+    }
+
+    const render = () =>{
+        const element = <TodoList />
+        ReactDOM.render(element, rootEl);
+    }
+
+    render();
+
+
+</script>
+</body>
+</html>
