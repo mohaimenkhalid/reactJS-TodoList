@@ -39,16 +39,17 @@
         }
     ];
 
-    const Todo = ({ id, task, removeTask }) => {
+    const Todo = ({ id, task, done, removeTask, toggleDone }) => {
         return(<div className="todo">
-            <button>X</button>
+            <button onClick={() => toggleDone(id)}> {done ? "X" : "+"} </button>
             <button onClick={() => removeTask(id)}>-</button>
-            <div className="task">{task}</div>
+            <div className="task">
+                {done ? <del>{task}</del> : <span>{task}</span>}
+            </div>
         </div>);
     }
 
     const TodoList = () => {
-
         const [todos, setTodos] = React.useState([...data]);
         const [inputVal, setInputVal] = React.useState("");
         const [currentId, setCurrentId] = React.useState(data[data.length - 1].id);
@@ -76,13 +77,25 @@
         const removeTask = (id) => {
             setTodos((currentTodos) => currentTodos.filter(todo => todo.id !== id))
         }
+
+        const toggleDone = (id) => {
+            setTodos(currentTodos => currentTodos.map(todo => {
+                if(todo.id === id){
+                    return {
+                        ...todo,
+                        done: !todo.done
+                    }
+                }
+                return todo;
+            }))
+        }
         return(<div className="todo-list">
             <input type="text" placeholder="Add a new task..."
                    onChange={handleChange}
                    onKeyDown={handleKeyDown}
                    value={inputVal}
             />
-            {todos.map((todo) => <Todo {...todo} removeTask={removeTask} />)}
+            {todos.map((todo) => <Todo {...todo} key={todo.id} removeTask={removeTask} toggleDone={toggleDone}/>)}
         </div>);
     }
 
@@ -92,8 +105,6 @@
     }
 
     render();
-
-
 </script>
 </body>
 </html>
